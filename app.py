@@ -1,5 +1,36 @@
+from openai import OpenAI
+import os
+from dotenv import load_dotenv
+load_dotenv(dotenv_path=".venv/.env")
 import streamlit as st
 import fitz  # this is pymupdf
+
+def open_ai_tailor(cv_text: str, jd_text: str) -> str:
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+    prompt = f"""
+You are AI CV Tailor. 
+You must tailor the following CV to the given job description without inventing new work experience, education, or projects. 
+Reorder, rephrase, and emphasise content truthfully so it aligns with the job description. 
+Keep the CV ATS-friendly, no tables or columns. 
+Return a fully written CV, ideally ≤2 pages (3 max if source exceeds 2 pages), followed by a brief summary of changes and any items the user should verify.
+
+CV:
+{cv_text}
+
+JOB DESCRIPTION:
+{jd_text}
+"""
+
+    response = client.responses.create(
+        model="gpt-5-nano",
+        input=prompt,
+    )
+
+    return response.output_text
+
+
+
 
 # Helper function: extract text from PDF
 def extract_text(pdf_bytes: bytes) -> str:
@@ -9,8 +40,10 @@ def extract_text(pdf_bytes: bytes) -> str:
             text += page.get_text("text") + "\n"
     return text.strip()
 
-st.set_page_config(page_title="AI CV Tailor", page_icon="🧵")
-st.title("🧵 AI CV Tailor")
+
+st.set_page_config(page_title="CV Tailor", page_icon="🧵")
+st.title("🧵 CV Tailor")
+
 
 # Upload CV
 cv_file = st.file_uploader("Upload your CV (PDF)", type=["pdf"])
@@ -41,4 +74,23 @@ else:
         st.subheader("Job Description")
         st.write(jd_text[:100000])  # limit to first 1000 characters too
 
-    st.button("Process CV and Job Description")
+col1, col2, col3 = st.columns(3)
+
+## Process Button
+with col2:
+    if st.button("Process CV and Job Description") and cv_file is not None and jd_text.strip():
+        with st.spinner("Processing..."):
+            tailored_text = open_ai_tailor(cv_text, jd_text)
+            st.markdown(tailored_text)
+
+
+# Contact Section
+st.markdown("---")  # horizontal line to separate
+st.markdown("## 📫 Contact Me")
+st.markdown(
+    """
+- 📧 Email: [ellismain282@gmail.com](mailto:ellismain282@gmail.com)  
+- 💼 LinkedIn: [Ellis Mainwaring](https://linkedin.com/in/ellismainwaring)  
+"""
+)
+
