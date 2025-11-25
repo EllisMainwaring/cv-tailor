@@ -42,7 +42,7 @@ def extract_text(pdf_bytes: bytes) -> str:
 
 
 st.set_page_config(page_title="CV Tailor", page_icon="🧵")
-st.title("🧵 CV Tailor")
+st.title("CV Tailor")
 
 
 # Upload CV
@@ -86,11 +86,11 @@ with col2:
 
 # Contact Section
 st.markdown("---")  # horizontal line to separate
-st.markdown("## 📫 Contact Me")
+st.markdown("## Contact Me")
 st.markdown(
     """
-- 📧 Email: [ellismain282@gmail.com](mailto:ellismain282@gmail.com)  
-- 💼 LinkedIn: [Ellis Mainwaring](https://linkedin.com/in/ellismainwaring)  
+- Email: [ellismain282@gmail.com](mailto:ellismain282@gmail.com)  
+- LinkedIn: [Ellis Mainwaring](https://linkedin.com/in/ellismainwaring)  
 """
 )
 
